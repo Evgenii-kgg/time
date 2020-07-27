@@ -1,60 +1,62 @@
 import React, { useState } from "react";
 import "./App.css";
+import { prettifyDate } from "./utils";
 
-import moment from 'moment';
+import moment from "moment";
 
-function DateTimePretty(Component) {
+class DateTimePretty extends React.Component {
+  render() {
+    return React.cloneElement(this.props.children, {
+      date: prettifyDate(this.props.date),
+    });
+  }
+}
+
+const getDateTimePrettyWrapper = (Component) => {
   console.log(Component);
-  
-  return class extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {
-        date: props.data,
-      };
-    }
 
-    componentDidMount() {
-      this.setState((prevState) => {
+  return class DateTimePretty extends React.Component {
+    // timeChange = (date) => {
 
-        let timeChange = "Недавно"
+    //   let timeChange = "Недавно"
 
-        if (moment().isAfter(prevState.date) < moment().subtract(1, 'hour')) {
-          timeChange = "12 минут назад"
-        } if(moment().isAfter(prevState.date) > moment().subtract(1, 'hour')) {
-          timeChange = "5 часов назад"
-        } if(moment().isAfter(prevState.date) > moment().subtract(1, 'day')) {
-          timeChange = "X дней назад"
-        }
-        return {
-          date: timeChange
-        };
-      });
-    }
+    //   if (moment().isAfter(date) < moment().subtract(1, 'hour')) {
+    //     timeChange = "12 минут назад"
+    //   } if(moment().isAfter(date) > moment().subtract(1, 'hour')) {
+    //     timeChange = "5 часов назад"
+    //   } if(moment().isAfter(date) > moment().subtract(1, 'day')) {
+    //     timeChange = "X дней назад"
+    //   }
+    //   return  timeChange
+
+    // }
 
     render() {
-      console.log(this.props , Component);
-      
-      return <Component date={this.state.date} />;
+      console.log(this.props, Component);
+
+      return <Component date={prettifyDate(this.props.date)} />;
     }
   };
-}
+};
 
 function DateTime(props) {
   return <p className="date">{props.date}</p>;
 }
 
 function Video(props) {
-  const comp = DateTimePretty(<DateTime date={props.date} />)
+  const Comp = getDateTimePrettyWrapper(DateTime);
   return (
     <div className="video">
       <iframe
         src={props.url}
-        frameborder="0"
+        frameBorder="0"
         allow="autoplay; encrypted-media"
-        allowfullscreen
+        allowFullScreen
       ></iframe>
-      {comp}
+      <DateTimePretty date={props.date}>
+        <DateTime />
+      </DateTimePretty>
+      {/* <Comp date={props.date}/>  */}
     </div>
   );
 }
@@ -97,5 +99,5 @@ export default function App() {
     },
   ]);
 
-  return <VideoList list={list} />
+  return <VideoList list={list} />;
 }
